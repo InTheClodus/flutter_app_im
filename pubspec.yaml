@@ -26,7 +26,11 @@ dependencies:
   dim: ^0.2.8
   random_pk: any
   font_awesome_flutter: any
-
+  flutter_swiper: ^1.1.6
+  flutter_spinkit: ^4.1.2+1
+  flare_flutter: ^2.0.3
+  extended_nested_scroll_view: ^0.4.0
+  flutter_easyrefresh: ^2.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

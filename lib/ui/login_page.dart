@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_im/style/theme.dart' as theme;
 import 'sign_in_page.dart';
 import 'sign_up_page.dart';
-import 'package:flutter_app_im/style/theme.dart' as theme;
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       new Image(
                           width: 250,
                           height: 191,
-                          image: new AssetImage("images/login_logo.png")),
+                          image: new AssetImage("assets/login_logo.png")),
                       new SizedBox(
                         height: 20,
                       ),

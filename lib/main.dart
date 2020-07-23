@@ -6,6 +6,8 @@ import 'package:dim/dim.dart';
 
 import 'dart:math';
 
+import 'package:flutter_app_im/pages/login_page.dart';
+
 void main() => runApp(new MyApp());
 
 class MyApp extends StatefulWidget {
@@ -31,6 +33,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     ////大家 一个消息监听通道要记得在initState中调用一下哦。
+    init();
     initListener();
     _users.add({
       'username': 'user1',
@@ -74,119 +77,120 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: Text('当前账号' + _users[_currentUser]["username"]),
-        ),
-        body: new Center(
-          child: CustomScrollView(
-            primary: false,
-            slivers: <Widget>[
-              SliverPersistentHeader(
-                delegate: _SliverAppBarDelegate(
-                    minHeight: 30,
-                    maxHeight: 200,
-                    child: Container(
-                      margin: EdgeInsets.all(10),
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: SingleChildScrollView(
-                        child: Text(_result.isEmpty ? "这里显示输出结果" : _result),
-                      ),
-                    )),
-                pinned: true,
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.all(10.0),
-                sliver: SliverGrid.count(
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 10.0,
-                  crossAxisCount: 4,
-                  children: <Widget>[
-                    RaisedButton(
-                      onPressed: () {
-                        init();
-                      },
-                      child: Text('初始化'),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        login();
-                      },
-                      child: Text('登录'),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        logout();
-                      },
-                      child: Text('登出'),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        postData();
-                      },
-                      child: Text('测试发送数据'),
-                    ),
+      home: LoginPage(),
+//      home: new Scaffold(
+//        appBar: new AppBar(
+//          title: Text('当前账号' + _users[_currentUser]["username"]),
+//        ),
+//        body: new Center(
+//          child: CustomScrollView(
+//            primary: false,
+//            slivers: <Widget>[
+//              SliverPersistentHeader(
+//                delegate: _SliverAppBarDelegate(
+//                    minHeight: 30,
+//                    maxHeight: 200,
+//                    child: Container(
+//                      margin: EdgeInsets.all(10),
+//                      padding: EdgeInsets.all(4),
+//                      decoration: BoxDecoration(
+//                          border: Border.all(),
+//                          borderRadius: BorderRadius.all(Radius.circular(5))),
+//                      child: SingleChildScrollView(
+//                        child: Text(_result.isEmpty ? "这里显示输出结果" : _result),
+//                      ),
+//                    )),
+//                pinned: true,
+//              ),
+//              SliverPadding(
+//                padding: const EdgeInsets.all(10.0),
+//                sliver: SliverGrid.count(
+//                  crossAxisSpacing: 10.0,
+//                  mainAxisSpacing: 10.0,
+//                  crossAxisCount: 4,
+//                  children: <Widget>[
 //                    RaisedButton(
 //                      onPressed: () {
-//                        canCelListener();
+//                        init();
 //                      },
-//                      child: Text('取消监听'),
+//                      child: Text('初始化'),
 //                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        sendTextMsg();
-                      },
-                      child: Text('发文本'),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        sendImageMsg();
-                      },
-                      child: Text('发图片'),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        sendLocationMsg();
-                      },
-                      child: Text('发位置'),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        getMessages();
-                      },
-                      padding: EdgeInsets.all(0),
-                      child: Text('历史消息'),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        getUserInfo();
-                      },
-                      child: Text('拿资料'),
-                    ),
-                    RaisedButton(
-                      padding: EdgeInsets.all(0),
-                      onPressed: () {
-                        setUserInfo();
-                      },
-                      child: Text('设置资料'),
-                    ),
-                    RaisedButton(
-                      padding: EdgeInsets.all(0),
-                      onPressed: () {
-                        getConversations();
-                      },
-                      child: Text('会话列表'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+//                    RaisedButton(
+//                      onPressed: () {
+//                        login();
+//                      },
+//                      child: Text('登录'),
+//                    ),
+//                    RaisedButton(
+//                      onPressed: () {
+//                        logout();
+//                      },
+//                      child: Text('登出'),
+//                    ),
+//                    RaisedButton(
+//                      onPressed: () {
+//                        postData();
+//                      },
+//                      child: Text('测试发送数据'),
+//                    ),
+////                    RaisedButton(
+////                      onPressed: () {
+////                        canCelListener();
+////                      },
+////                      child: Text('取消监听'),
+////                    ),
+//                    RaisedButton(
+//                      onPressed: () {
+//                        sendTextMsg();
+//                      },
+//                      child: Text('发文本'),
+//                    ),
+//                    RaisedButton(
+//                      onPressed: () {
+//                        sendImageMsg();
+//                      },
+//                      child: Text('发图片'),
+//                    ),
+//                    RaisedButton(
+//                      onPressed: () {
+//                        sendLocationMsg();
+//                      },
+//                      child: Text('发位置'),
+//                    ),
+//                    RaisedButton(
+//                      onPressed: () {
+//                        getMessages();
+//                      },
+//                      padding: EdgeInsets.all(0),
+//                      child: Text('历史消息'),
+//                    ),
+//                    RaisedButton(
+//                      onPressed: () {
+//                        getUserInfo();
+//                      },
+//                      child: Text('拿资料'),
+//                    ),
+//                    RaisedButton(
+//                      padding: EdgeInsets.all(0),
+//                      onPressed: () {
+//                        setUserInfo();
+//                      },
+//                      child: Text('设置资料'),
+//                    ),
+//                    RaisedButton(
+//                      padding: EdgeInsets.all(0),
+//                      onPressed: () {
+//                        getConversations();
+//                      },
+//                      child: Text('会话列表'),
+//                    ),
+//                  ],
+//                ),
+//              ),
+//            ],
+//          ),
+//        ),
+//      ),
     );
   }
 
@@ -205,7 +209,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> sendTextMsg() async {
     try {
       var result = await _dim.sendTextMessages(
-          _users[_users.length - _currentUser - 1]['username'], "这是一条测试消息");
+          _users[1]['username'], "这是一条测试消息");
       print(result);
       setState(() {
         this._result = result;
