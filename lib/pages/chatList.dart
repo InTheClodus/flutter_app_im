@@ -21,18 +21,29 @@ class _ChatListState extends State<ChatList> {
     super.initState();
     listFird();
   }
+
   Future<void>listFird()async{
     try{
       var result=await _dim.listFriends("user1");
       var map=json.decode(result.toString());
       setState(() {
         list=map.map((f)=>f).toList();
-        list.map((f)=>print(f['profile']['nickname'])).toList();
+        list.map((f)=>print(f)).toList();
       });
     }on PlatformException{
 
     }
   }
+
+  Future<void>getConversations()async{
+    try{
+      var result=await _dim.getConversations();
+      print(result);
+    }on PlatformException{
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,17 +51,28 @@ class _ChatListState extends State<ChatList> {
         IconButton(
           icon: Icon(Icons.add),
           onPressed: ()async{
-            var res=await _dim.addFriend('user1');
+            var res=await _dim.addFriend('user2');
+            if(res=="addFriend success"){
+              await listFird();
+            }
             print(res);
           },
         )
       ],),
       body: ListView.builder(itemCount:list.length,itemBuilder: (context,index){
         return Container(height: 35,child: InkWell(
-          child: Text(list[index]['profile']['nickname']),
-          onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage())),
+          child: Row(
+            children: <Widget>[
+              Text(list[index]['identifier'])
+            ],
+          ),
+          onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatPage(user: list[index]['identifier'],))),
         ),);
       }),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: ()=>getConversations(),
+      ),
     );
   }
 }

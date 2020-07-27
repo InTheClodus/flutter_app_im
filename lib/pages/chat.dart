@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:dim/dim.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
+import 'package:flutter/services.dart';
 /// 聊天界面示例
 class ChatPage extends StatefulWidget {
+  final String user;
+
+  const ChatPage({Key key, this.user}) : super(key: key);
   @override
   ChatPageState createState() {
     return ChatPageState();
@@ -13,20 +18,19 @@ class ChatPage extends StatefulWidget {
 
 class ChatPageState extends State<ChatPage> {
   // 信息列表
-  List<MessageEntity> _msgList;
-
+  List<MessageEntity> _msgList=[];
+  Dim _dim=new Dim();
+  String _result = "";
   // 输入框
   TextEditingController _textEditingController;
   // 滚动控制器
   ScrollController _scrollController;
-
+  StreamSubscription<dynamic> _messageStreamSubscription;
   @override
   void initState() {
     super.initState();
-    _msgList = [
-      MessageEntity(true, "It's good!"),
-      MessageEntity(false, 'EasyRefresh'),
-    ];
+    initListener();
+    getMessages();
     _textEditingController = TextEditingController();
     _textEditingController.addListener(() {
       setState(() {});
@@ -40,21 +44,59 @@ class ChatPageState extends State<ChatPage> {
     _textEditingController.dispose();
     _scrollController.dispose();
   }
-
+// 监听会话
+  Future<void> initListener()async{
+    if(!mounted)return;
+    if(_messageStreamSubscription==null){
+      _messageStreamSubscription=_dim.onMessage.listen((dynamic onData){
+        var map=json.decode(onData.toString());
+        print('--->>>'+map.toString());
+        setState(() {
+          map.map((f){
+            print('接收到消息，');
+            _msgList.add(MessageEntity(f['sender']==widget.user?false:true,f['message']['text']));
+          }).toList();
+        });
+        print('收到消息'+onData.toString());
+      });
+    }
+  }
   // 发送消息
-  void _sendMsg(String msg) {
-    setState(() {
-      _msgList.insert(0, MessageEntity(true, msg));
-    });
-    _scrollController.animateTo(0.0,
-        duration: Duration(milliseconds: 300), curve: Curves.linear);
+  void _sendMsg(String msg) async{
+    try {
+      var result = await _dim.sendTextMessages(
+          widget.user, msg);
+      setState(() {
+        _msgList.add(MessageEntity(true, msg));
+      });
+
+    } on PlatformException {
+      print("发送消息失败");
+      setState(() {
+        this._result = "发送消息失败";
+      });
+    }
   }
 
+  void getMessages()async{
+    try{
+      var result=await _dim.getMessages(widget.user);
+      var map=json.decode(result.toString());
+      setState(() {
+        map.map((f){
+          _msgList.add(MessageEntity(f['sender']==widget.user?false:true,f['message']['text']));
+        }).toList();
+      });
+
+    }on PlatformException{
+
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('KnoYo'),
+        title: Text(widget.user),
         centerTitle: false,
         backgroundColor: Colors.grey[200],
         elevation: 0.0,
@@ -158,6 +200,7 @@ class ChatPageState extends State<ChatPage> {
                       }
                     });
                   },
+
                 );
               },
             ),
@@ -334,7 +377,7 @@ class ChatPageState extends State<ChatPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'KnoYo',
+                  widget.user,
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 13.0,
